@@ -27,6 +27,8 @@ const reviewSchema = new mongoose.Schema({
     contents: String,
     reviewTitle: String,
     posttime: Date,
+    likes: Array,
+    likesCount: Number,
 });
 
 const Review = mongoose.model('Review', reviewSchema);
@@ -95,9 +97,9 @@ app.post('/api/reviews', authenticate, async (req, res) => {
       res.status(403).json({ result: 'Invalid token' });
     } else {
   try {
-    const { userName, className, college, professor, termTaken, rating, contents, reviewTitle } = req.body;
+    const { userName, className, college, professor, termTaken, rating, contents, reviewTitle, likes, likesCount } = req.body;
     const posttime = new Date();
-    const review = new Review({ userName, className, college, professor, termTaken, rating, contents, reviewTitle, posttime });
+    const review = new Review({ userName, className, college, professor, termTaken, rating, contents, reviewTitle, posttime, likes, likesCount });
     await review.save();
     //await axios.post('/api/reviews', review);
     res.status(201).json({ message: 'Review created successfully.' });
@@ -143,8 +145,8 @@ app.put('/api/reviews/:id', authenticate, async (req, res) => {
       res.status(403).json({ result: 'Invalid token' });
     } else {
   try {
-    const { userName, className, college, professor, termTaken, rating, contents, reviewTitle } = req.body;
-    const review = await Review.findByIdAndUpdate(req.params.id, { userName, className, college, professor, termTaken, rating, contents, reviewTitle });
+    const { userName, className, college, professor, termTaken, rating, contents, reviewTitle, likes, likesCount } = req.body;
+    const review = await Review.findByIdAndUpdate(req.params.id, { userName, className, college, professor, termTaken, rating, contents, reviewTitle, likes, likesCount });
     if (!review) {
       return res.status(404).json({ error: 'Review not found.' });
     }
@@ -178,4 +180,5 @@ app.delete('/api/reviews/:id', authenticate, async (req, res) => {
 app.listen(4000, () => {
   console.log('Server started on port 4000');
 });
+
 
