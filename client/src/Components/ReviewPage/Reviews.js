@@ -430,9 +430,8 @@ const Reviews = () => {
     handleNewReviewChange('termTaken', value)
   }
 
-  const handleLikes = async (event, id) => {
+  const handleLikes = async (event, id, flag) => {
     event.stopPropagation();
-  
     try {
       const response = await axios.get(`http://localhost:4000/api/reviews/${id}`);
       const review = response.data;
@@ -457,6 +456,9 @@ const Reviews = () => {
       fetchReviews();
       handleFilter();
       handleSortOptionChange(sortBy);
+      if (flag === 1) {
+        setSelectedReview(review)
+      }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -493,7 +495,7 @@ if(!selectedReview) {
               </span>
               <div style = {{display: 'flex', flexDirection: 'row', marginTop: '10px'}}>
               <div className={review.likes.includes(user) ? classes.likeButton : classes.noLikeButton}> 
-              <FontAwesomeIcon icon={faThumbsUp}  onClick={(event) => handleLikes(event, review._id)} />
+              <FontAwesomeIcon icon={faThumbsUp}  onClick={(event) => handleLikes(event, review._id, 0)} />
               <span style = {{marginLeft: '3px', color: 'blue'}}>{review.likesCount} Like</span>
               </div>
               {user === review.userName && 
@@ -575,7 +577,7 @@ if(!selectedReview) {
         >
             <div className={classes.selectedReviewInfo}>
                 <p >Review by {selectedReview.userName} made on {dateTimeFormat(selectedReview.posttime)}</p>
-                <p style = {{color: '#1877f2'}}>{selectedReview.className} taught by {selectedReview.professor} ({selectedReview.termTaken})</p> 
+                <p style = {{color: '#1877f2'}}>{selectedReview.className} taught by Prof. {selectedReview.professor} ({selectedReview.termTaken})</p> 
             </div>
             <div className={classes.selectedReviewTitle}>
                 <h1> {selectedReview.reviewTitle} </h1>
@@ -583,10 +585,14 @@ if(!selectedReview) {
           <div className={classes.modalBody}>
             <div>{selectedReview.contents}</div>
           </div>
-          <span style ={{display: 'flex', flexDirection: 'row'}}>
+          <span style ={{display: 'flex', flexDirection: 'row', marginLeft: '2px'}}>
           <strong>Rating: {selectedReview.rating}/5    </strong>
           <Star/>
           </span>
+          <div className={selectedReview.likes.includes(user) ? classes.likeButton : classes.noLikeButton} style = {{marginTop: '7px', marginLeft: '5px'}}> 
+              <FontAwesomeIcon icon={faThumbsUp}  onClick={(event) => handleLikes(event, selectedReview._id, 1)} />
+              <span style = {{marginLeft: '3px', color: 'blue'}}>{selectedReview.likesCount} Like</span>
+          </div>
           <Button className={classes.closeButton} onClick={() => {setSelectedReview(null)
         }}>
             Close

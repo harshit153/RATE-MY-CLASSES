@@ -81,7 +81,7 @@ app.post('/api/login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid username or password.' });
     }
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {expiresIn: '1200s'});
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {expiresIn: '3600s'});
     res.status(200).json({ token });
   } catch (error) {
     console.error('Login error:', error);
